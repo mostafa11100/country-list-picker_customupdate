@@ -401,13 +401,15 @@ class _CountryListPickerState extends State<CountryListPicker> {
         children: [
           //flage
           if (widget.isShowFlag == true)
-            Flexible(
-                child: Image.asset(
-                    "assets/flags/${country.iso_3166_1_alpha2.toLowerCase()}.png",
-                    package: "country_list_picker",
-                    fit: BoxFit.fill,
-                    height: widget.flagSize.height,
-                    width: widget.flagSize.width)),
+            imageshape(widget.flagSize.height, widget.flagSize.width, country),
+
+          // Flexible(
+          //     child: Image.asset(
+          //         "assets/flags/${country.iso_3166_1_alpha2.toLowerCase()}.png",
+          //         package: "country_list_picker",
+          //         fit: BoxFit.fill,
+          //         height: widget.flagSize.height,
+          //         width: widget.flagSize.width)),
           //code
           if (widget.isShowDiallingCode == true)
             Padding(
@@ -441,4 +443,57 @@ class _CountryListPickerState extends State<CountryListPicker> {
             ),
         ]);
   }
+}
+
+class TrimmedCircleClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    // نحدد النسبة اللي فيها شفافية
+    double trimRatio = 0.15;
+
+    // نحسب المسافة اللي هنبدأ منها (trim)
+    double dx = size.width * trimRatio;
+    double dy = size.height * trimRatio;
+
+    // نحسب الحجم المتبقي بعد استبعاد الشفافية
+    double width = size.width * (1 - 2 * trimRatio);
+    double height = size.height * (1 - 2 * trimRatio);
+
+    // ناخد أصغر بُعد عشان نرسم دايرة مش بيضاوي
+    double side = width < height ? width : height;
+
+    // نرسم الدايرة جوه المستطيل المتبقي
+    Rect rect = Rect.fromLTWH(dx, dy, side, side);
+
+    Path path = Path()..addOval(rect);
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
+
+imageshape(h, w, country) {
+  // if (shape == BoxShape.circle) {
+  ClipPath(
+    clipper: TrimmedCircleClipper(),
+    child: Image.asset(
+      "assets/flags/${country.iso_3166_1_alpha2.toLowerCase()}.png",
+      package: "country_list_picker",
+      fit: BoxFit.cover,
+      height: h,
+      width: w,
+    ),
+  );
+  // }
+  // return ClipRRect(
+  //   borderRadius: BorderRadius.circular(radius),
+  //   child: Image.asset(
+  //     "assets/flags/${country.iso_3166_1_alpha2.toLowerCase()}.png",
+  //     package: "country_list_picker",
+  //     fit: BoxFit.cover,
+  //     height: h,
+  //     width: w,
+  //   ),
+  // );
 }
