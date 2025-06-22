@@ -473,9 +473,9 @@ class TrimmedCircleClipper extends CustomClipper<Path> {
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
 
-imageshape(h, w, country) {
+Widget imageshape(h, w, country) {
   // if (shape == BoxShape.circle) {
-  ClipPath(
+  return ClipPath(
     clipper: TrimmedCircleClipper(),
     child: Image.asset(
       "assets/flags/${country.iso_3166_1_alpha2.toLowerCase()}.png",
